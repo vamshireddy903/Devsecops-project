@@ -168,7 +168,7 @@ jobs:
           IMAGE_TAG="sha-${GITHUB_SHA}"
           NEW_IMAGE="${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}"
           # Replace the image line, preserving indentation
-          sed -i "s|^\(\s*image:\s*\).*|\1${NEW_IMAGE}|g" kubernetes/deployment.yaml
+          sed -i "s|^\s*image:.*|        image: ${NEW_IMAGE}|g" kubernetes/deployment.yaml
           echo "Deployment file updated to use image: ${NEW_IMAGE}"
           git diff kubernetes/deployment.yaml
     
