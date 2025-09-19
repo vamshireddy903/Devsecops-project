@@ -97,7 +97,9 @@ Option 2: Using Ubuntu repo (might be older version):
    yarn dev
    ```
 
-4. Open your browser and navigate to `http://localhost:5173`
+       npm run dev -- --host
+   
+5. Open your browser and navigate to `http://localhost:5173`
 
 ## Building for Production
 
