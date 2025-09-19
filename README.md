@@ -52,6 +52,29 @@ The game implements the following rules:
 - Node.js (v14 or higher)
 - npm or yarn
 
+# Install npm
+
+1. Update system packages
+
+       sudo apt update
+       sudo apt upgrade -y
+
+2. Install Node.js & npm (latest LTS version)  
+Option 1: Using NodeSource (recommended for latest LTS):  
+
+        curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+        sudo apt install -y nodejs
+
+Option 2: Using Ubuntu repo (might be older version):
+
+       sudo apt install -y nodejs npm
+
+3. Check version
+
+       node -v
+       npm -v
+
+
 ### Installation
 
 1. Clone the repository:
