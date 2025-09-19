@@ -17,7 +17,7 @@ spec:
       containers:
       - name: tic-tac-toe
         # Placeholder image; CI/CD will replace the tag automatically
-        image: ghcr.io/vamshireddy903/devsecops-project:sha-91e6a383587d6076c2ef358d2dac4cca24a0424d
+        image: ghcr.io/vamshireddy903/devsecops-project:sha-90cd308317ff835f238320b5903a1ccb43af9045
         imagePullPolicy: Always
         ports:
         - containerPort: 80
