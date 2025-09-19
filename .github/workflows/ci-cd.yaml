@@ -4,7 +4,7 @@ on:
   push:
     branches: [ main ]
     paths-ignore:
-      - 'kubernetes/deployment.yaml'  # Prevent loops
+      - 'kubernetes/deployment.yaml'  # Ignore changes to deployment to prevent loops
   pull_request:
     branches: [ main ]
 
@@ -141,8 +141,7 @@ jobs:
 
       - name: Set image tag output
         id: set_output
-        run: |
-          echo "image_tag=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_OUTPUT
+        run: echo "image_tag=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_OUTPUT
 
   update-k8s:
     name: Update Kubernetes Deployment
@@ -162,17 +161,18 @@ jobs:
           git config user.email "actions@github.com"
 
       - name: Update Kubernetes deployment file
+        env:
+          IMAGE_TAG: sha-${{ github.sha }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          REGISTRY: ghcr.io
         run: |
-          REGISTRY="ghcr.io"
-          IMAGE_NAME="${GITHUB_REPOSITORY}"
-          IMAGE_TAG="sha-${GITHUB_SHA}"
-          NEW_IMAGE="${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}"
-          sed -i "s|image:.*|image: ${NEW_IMAGE}|g" kubernetes/deployment.yaml
-          echo "Deployment file updated to use image: ${NEW_IMAGE}"
-          git diff kubernetes/deployment.yaml
+          NEW_IMAGE="${REGISTRY}/${GITHUB_REPOSITORY}:${IMAGE_TAG}"
+          sed -i "s|^\s*image:.*|  image: ${NEW_IMAGE}|g" kubernetes/deployment.yaml
+          echo "Updated deployment to use image: ${NEW_IMAGE}"
+          grep -A 1 "image:" kubernetes/deployment.yaml
 
       - name: Commit and push changes
         run: |
           git add kubernetes/deployment.yaml
           git commit -m "Update Kubernetes deployment with new image tag: ${{ needs.docker.outputs.image_tag }} [skip ci]" || echo "No changes to commit"
-          git push origin HEAD:main
+          git push
