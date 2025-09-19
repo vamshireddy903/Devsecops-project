@@ -144,6 +144,7 @@ jobs:
         id: set_output
         run: |
           echo "image_tag=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_OUTPUT
+
   update-k8s:
     name: Update Kubernetes Deployment
     runs-on: ubuntu-latest
@@ -167,17 +168,15 @@ jobs:
           IMAGE_NAME="${GITHUB_REPOSITORY}"
           IMAGE_TAG="sha-${GITHUB_SHA}"
           NEW_IMAGE="${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}"
-          # Replace the image line, preserving indentation
-          sed -i "s|^\s*image:.*|        image: ${NEW_IMAGE}|g" kubernetes/deployment.yaml
+          
+          # Update the image line in the deployment YAML
+          sed -i "s|^\([[:space:]]*image:\).*|\1 ${NEW_IMAGE}|" kubernetes/deployment.yaml
+          
           echo "Deployment file updated to use image: ${NEW_IMAGE}"
           git diff kubernetes/deployment.yaml
     
       - name: Commit and push changes
         run: |
-          git fetch origin main
-          git reset --hard origin/main
-          git add -A
-          git status
-          git diff --cached
+          git add kubernetes/deployment.yaml
           git commit -m "Update Kubernetes deployment with new image tag: ${{ needs.docker.outputs.image_tag }} [skip ci]" || echo "No changes to commit"
           git push origin HEAD:main
