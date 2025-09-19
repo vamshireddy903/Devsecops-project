@@ -169,8 +169,8 @@ jobs:
           IMAGE_TAG="sha-${GITHUB_SHA}"
           NEW_IMAGE="${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}"
 
-          # Replace image line in deployment YAML
-          sed -i "s|image:.*|image: ${NEW_IMAGE}|g" kubernetes/deployment.yaml
+          # Replace the image line in deployment YAML (works with indentation)
+          sed -i "s|^\(\s*image:\).*|\1 ${NEW_IMAGE}|g" kubernetes/deployment.yaml
 
           echo "Deployment file updated to use image: ${NEW_IMAGE}"
           grep "image:" kubernetes/deployment.yaml
